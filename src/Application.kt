@@ -14,10 +14,6 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.DevelopmentEngine.mai
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
-
         get("/html-dsl") {
             call.respondHtml {
                 body {
@@ -29,6 +25,10 @@ fun Application.module(testing: Boolean = false) {
                     }
                 }
             }
+        }
+
+        post("/") {
+            call.request
         }
     }
 }

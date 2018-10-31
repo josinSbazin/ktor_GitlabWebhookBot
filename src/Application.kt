@@ -28,7 +28,7 @@ fun Application.module(testing: Boolean = false) {
         }
 
         post("/") {
-            call.request
+            call.receiveText()
         }
     }
 }

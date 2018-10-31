@@ -28,7 +28,12 @@ fun Application.module(testing: Boolean = false) {
         }
 
         post("/") {
-            call.receiveText()
+            val text = call.receiveText()
+            call.respondHtml {
+                body {
+                    h1 { +text }
+                }
+            }
         }
     }
 }

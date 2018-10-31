@@ -1,10 +1,8 @@
 package com.example
 
 import io.ktor.application.*
-import io.ktor.response.*
 import io.ktor.request.*
 import io.ktor.routing.*
-import io.ktor.http.*
 import io.ktor.html.*
 import kotlinx.html.*
 
@@ -29,11 +27,7 @@ fun Application.module(testing: Boolean = false) {
 
         post("/") {
             val text = call.receiveText()
-            call.respondHtml {
-                body {
-                    h1 { +text }
-                }
-            }
+            log.debug(text)
         }
     }
 }

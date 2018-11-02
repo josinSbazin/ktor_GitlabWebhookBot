@@ -39,7 +39,11 @@ class BotApplication {
 
             post("/gitlab") {
                 val text = call.receiveText()
-                sendMessage(text)
+                try {
+                    sendMessage(text)
+                } catch (e: TelegramApiException) {
+                    log.error(e.message)
+                }
             }
         }
     }
@@ -47,17 +51,17 @@ class BotApplication {
     fun register(chatId: Long?, bot: Bot) {
         this.chatId = chatId
         this.bot = bot
-        sendMessage("Bot registered!")
+        try {
+            sendMessage("Bot registered!")
+        } catch (e: TelegramApiException) {
+            //NA
+        }
     }
 
     private fun sendMessage(text: String) {
         chatId?.let { id ->
             val sendMessage = SendMessage(id, text)
-            try {
-                bot?.execute(sendMessage)
-            } catch (e: TelegramApiException) {
-                //hz
-            }
+            bot?.execute(sendMessage)
         }
     }
 }

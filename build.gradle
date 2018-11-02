@@ -35,6 +35,7 @@ dependencies {
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-html-builder:$ktor_version"
     compile "org.telegram:telegrambots:$telegramBot_version"
+    compile "io.ktor:ktor-gson:$ktor_version"
 
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
 }

@@ -14,8 +14,9 @@ class Bot(private val app: BotApplication) : TelegramLongPollingBot() {
 
     override fun onUpdateReceived(update: Update?) {
         if (update?.hasMessage() == true && update.message.isCommand) {
-            if (update.message.text == BOT_REGISTER) {
-                app.register(update.message.chatId, this)
+            when {
+                update.message.text == BOT_REGISTER -> app.register(update.message.chatId)
+                update.message.text == BOT_UNREGISTER -> app.unregister(update.message.chatId)
             }
         }
     }
@@ -24,6 +25,6 @@ class Bot(private val app: BotApplication) : TelegramLongPollingBot() {
         private const val BOT_USERNAME = "WbGitlabBot"
         private const val BOT_SECRET_ENV_NAME = "BOT_SECRET"
         private const val BOT_REGISTER = "/register"
+        private const val BOT_UNREGISTER = "/unregister"
     }
-
 }

@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 data class Changes(
 
-	@field:SerializedName("updated_at")
-	val updatedAt: List<String?>? = null,
+    @field:SerializedName("updated_at")
+    val updatedAt: List<String?> = emptyList(),
 
-	@field:SerializedName("updated_by_id")
-	val updatedById: List<Any?>? = null,
+    @field:SerializedName("updated_by_id")
+    val updatedById: List<Any?> = emptyList(),
 
-	@field:SerializedName("labels")
+    @field:SerializedName("labels")
 	val labels: Labels? = null
 )

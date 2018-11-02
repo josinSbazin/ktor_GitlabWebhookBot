@@ -23,5 +23,5 @@ data class MergeRequestModel(
     val objectKind: String? = null,
 
     @field:SerializedName("labels")
-    val labels: List<LabelsItem?>? = null
+    val labels: List<LabelsItem?> = emptyList()
 )

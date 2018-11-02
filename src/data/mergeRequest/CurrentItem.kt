@@ -2,7 +2,6 @@ package com.example.data.mergeRequest
 
 import com.google.gson.annotations.SerializedName
 
-
 data class CurrentItem(
 
     @field:SerializedName("template")

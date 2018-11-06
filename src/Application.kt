@@ -104,7 +104,7 @@ class BotApplication {
 
     //todo use DI
     private fun initBot() {
-        bot = Bot()
+        bot = Bot.create()
         bot.addOnNewMessageListener(::onBotMessageReceived)
     }
 

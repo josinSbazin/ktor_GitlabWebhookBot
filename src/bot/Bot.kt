@@ -11,9 +11,7 @@ class Bot : TelegramLongPollingBot(), IBot {
     private val listeners: MutableList<(Long, String) -> Unit> = mutableListOf()
 
     init {
-        ApiContextInitializer.init()
-        val api = TelegramBotsApi()
-        api.registerBot(this)
+
     }
 
     override fun getBotUsername(): String {
@@ -42,5 +40,13 @@ class Bot : TelegramLongPollingBot(), IBot {
     companion object {
         private const val BOT_USERNAME = "WbGitlabBot"
         private const val BOT_SECRET_ENV_NAME = "BOT_SECRET"
+
+        fun create(): Bot {
+            ApiContextInitializer.init()
+            val bot = Bot()
+            val api = TelegramBotsApi()
+            api.registerBot(bot)
+            return bot
+        }
     }
 }

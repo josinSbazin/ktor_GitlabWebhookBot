@@ -19,6 +19,7 @@ import io.ktor.routing.routing
 import kotlinx.html.body
 import kotlinx.html.h1
 import java.io.IOException
+import java.text.DateFormat
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.DevelopmentEngine.main(args)
 
@@ -35,6 +36,7 @@ class BotApplication {
     fun Application.main() {
         install(ContentNegotiation) {
             gson {
+                setDateFormat(DateFormat.LONG)
                 setPrettyPrinting()
             }
         }

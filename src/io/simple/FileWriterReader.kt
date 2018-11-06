@@ -2,10 +2,15 @@ package com.example.io.simple
 
 import com.example.io.IDb
 import java.io.BufferedReader
+import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
 class FileWriterReader : IDb {
+    init {
+        File(CHATS_FILE_NAME).createNewFile()
+    }
+
     override fun getChatIds(): Set<Long> {
         BufferedReader(FileReader(CHATS_FILE_NAME)).use { bufferedReader ->
             return bufferedReader.lineSequence().map { it.toLong() }.toSet()

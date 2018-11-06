@@ -18,6 +18,7 @@ import io.ktor.routing.post
 import io.ktor.routing.routing
 import kotlinx.html.body
 import kotlinx.html.h1
+import java.io.IOException
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.DevelopmentEngine.main(args)
 
@@ -38,8 +39,12 @@ class BotApplication {
             }
         }
 
-        initBot()
-        initDb()
+        try {
+            initBot()
+            initDb()
+        } catch (e: IOException) {
+            log.error(e.message)
+        }
 
         routing {
             get("/hey") {

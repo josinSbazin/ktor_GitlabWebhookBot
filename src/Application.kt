@@ -1,6 +1,10 @@
 package com.example
 
+import bot.Bot
+import com.example.bot.IBot
 import com.example.data.mergeRequest.MergeRequestModel
+import com.example.io.IDb
+import com.example.io.simple.FileWriterReader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -14,11 +18,6 @@ import io.ktor.routing.post
 import io.ktor.routing.routing
 import kotlinx.html.body
 import kotlinx.html.h1
-import org.telegram.telegrambots.ApiContextInitializer
-import org.telegram.telegrambots.meta.TelegramBotsApi
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import java.text.DateFormat
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.DevelopmentEngine.main(args)
 
@@ -29,23 +28,20 @@ fun Application.module(testing: Boolean = false) {
 }
 
 class BotApplication {
-    private var bot: Bot? = null
-    private val registredChatsIds: MutableSet<Long> = mutableSetOf()
+    private lateinit var bot: IBot
+    private lateinit var db: IDb
 
     fun Application.main() {
         install(ContentNegotiation) {
             gson {
-                setDateFormat(DateFormat.LONG)
                 setPrettyPrinting()
             }
         }
 
-        routing {
-            ApiContextInitializer.init()
-            val api = TelegramBotsApi()
-            bot = Bot(this@BotApplication)
-            api.registerBot(bot)
+        initBot()
+        initDb()
 
+        routing {
             get("/hey") {
                 call.respondHtml {
                     body {
@@ -57,38 +53,69 @@ class BotApplication {
             post("/gitlab") {
                 val model = call.receive<MergeRequestModel>()
                 try {
-                    for (chatId in registredChatsIds) {
-                        sendMessage(chatId, model.toString())
+                    db.getChatIds().forEach { id ->
+                        bot.sendMessage(id, model.toString())
                     }
-                } catch (e: TelegramApiException) {
+                } catch (e: Exception) {
                     log.error(e.message)
+                    log.error(e.stackTrace.toString())
                 }
             }
         }
     }
 
-    fun register(chatId: Long?) {
+    private fun register(chatId: Long?) {
         if (chatId != null) {
-            registredChatsIds.add(chatId)
             try {
-                sendMessage(chatId, "Bot registered!")
-            } catch (e: TelegramApiException) {
-                //NA
+                if (db.addChatId(chatId)) {
+                    bot.sendMessage(chatId, "Chat registered")
+                } else {
+                    bot.sendMessage(chatId, "Warning! Chat already registered")
+                }
+            } catch (e: Exception) {
+                bot.sendMessage(chatId, "ERROR! " + e.message)
             }
         }
     }
 
-    fun unregister(chatId: Long?) {
+
+    private fun unregister(chatId: Long?) {
         if (chatId != null) {
-            registredChatsIds.remove(chatId)
+            try {
+                if (db.removeChatId(chatId)) {
+                    bot.sendMessage(chatId, "Chat unregistered")
+                } else {
+                    bot.sendMessage(chatId, "Have not chat id in registered list")
+                }
+            } catch (e: Exception) {
+                bot.sendMessage(chatId, "ERROR! " + e.message)
+            }
         }
     }
 
-    private fun sendMessage(chatId: Long, text: String) {
-        chatId.let { id ->
-            val sendMessage = SendMessage(id, text)
-            bot?.execute(sendMessage)
+    private fun onBotMessageReceived(chatId: Long, message: String) {
+        when (message) {
+            BOT_REGISTER -> register(chatId)
+            BOT_UNREGISTER -> unregister(chatId)
+            else -> bot.sendMessage(chatId, "Unresolved command")
         }
+
+    }
+
+    //todo use DI
+    private fun initBot() {
+        bot = Bot()
+        bot.addOnNewMessageListener(::onBotMessageReceived)
+    }
+
+    //todo use DI
+    private fun initDb() {
+        db = FileWriterReader()
+    }
+
+    private companion object {
+        private const val BOT_REGISTER = "/register"
+        private const val BOT_UNREGISTER = "/unregister"
     }
 }
 

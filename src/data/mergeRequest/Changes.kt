@@ -1,7 +1,6 @@
 package com.example.data.mergeRequest
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class Changes(
 
@@ -9,7 +8,7 @@ data class Changes(
     val updatedById: List<Long?> = emptyList(),
 
     @field:SerializedName("updated_at")
-    val updatedAt: List<Date> = emptyList(),
+    val updatedAt: UpdatedAt? = null,
 
     @field:SerializedName("labels")
     val labels: Labels? = null

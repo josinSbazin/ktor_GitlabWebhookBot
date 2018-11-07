@@ -2,7 +2,6 @@ package com.example
 
 import bot.Bot
 import com.example.bot.IBot
-import com.example.data.mergeRequest.MergeRequestModel
 import com.example.io.IDb
 import com.example.io.simple.FileWriterReader
 import io.ktor.application.Application
@@ -12,7 +11,7 @@ import io.ktor.application.log
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.html.respondHtml
-import io.ktor.request.receive
+import io.ktor.request.receiveText
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
@@ -56,7 +55,8 @@ class BotApplication {
             }
 
             post("/gitlab") {
-                val model = call.receive<MergeRequestModel>()
+                //                val model = call.receive<MergeRequestModel>()
+                val model = call.receiveText()
                 try {
                     db.getChatIds().forEach { id ->
                         bot.sendMessage(id, model.toString())
